@@ -1,0 +1,172 @@
+\input macros
+\rightskip=0pt plus 1fill
+\input cstuff
+\headline{{\bf CECS 476\hfill Assignment 4\hfill Spring 2019}}
+\footline{Nathan Pickrell \hfill 5 February 2019 (Week 3 Lecture 1)\hfill 
+Due: 7 February 2019 (Week 3 Lab 2)}
+\parindent 0pt
+
+On all assignments, be sure to indicate the name of the
+machine you are assigned to administer.
+
+This first question of this assignment emphasizes shell programming,
+the remaining questions have you examine the file system.
+
+Make sure the user {\ltt{}bob} exists on your 
+machine.
+
+Simple shell script.
+
+As bob, write a shell script that examines all the processes on the
+system and ``reports" bash shell processes
+into a file called {\ltt{}bashlog}.
+First, this script should append to the {\ltt{}bashlog} the {\ltt{}date}.
+Then, it should do a {\ltt{}ps aux}, and all lines (use {\ltt{}grep})
+containing the letters bash but not containing the letters cpeek
+should be appended to the {\ltt{}bashlog}.
+Your script file should be called {\ltt{}cpeek}
+
+Test your shell script by
+running your command several times with various users logged 
+in (for example root and your csa account)
+(i.e., just make sure it works).
+
+1) Report: the exact contents of {\ltt{}cpeek}.
+(Do NOT report the contents of your bashlog.)
+
+#!/bin/bash
+date >> bashlog.txt
+ps aux | grep bash | grep -v "cpeek" >> bashlog.txt
+
+More advanced shell script.
+
+As bob, write a shell script called {\ltt{}clook}.
+This shell script takes an argument that should be the name of the directory.
+If it is given the name of something that isn't a directory (or doesn't
+exist) it should print ``Sorry".
+If it is given the name of a directory it should print the names of
+any items in that directory that are files and are executable. 
+
+Test your shell script by running your command on {\ltt{}/etc/printcap}
+(it's a file and should print ``Sorry") and on {\ltt{}~djv} (do an {\ltt{}ls}
+to see confirm the names of the executables.
+
+2) Report: the exact contents of {\ltt{}clook}.
+
+#!/bin/bash
+test -d $1
+	if [ $? == 0 ]; then
+		for file in $(ls -l)
+			do
+				if [ -x "$file" ] && [ -f "file" ]; then
+				echo $file
+			fi
+		done
+	else
+	echo "Sorry"
+fi
+
+On the {\ltt{}cheetah} examine and report the following:
+
+3) What three hard drives are attached to the file tree and where (mount/df)?
+With the df command, Linux lists one hard drive as a virtual device called 
+{\ltt{}/dev/root}. You can determine which hard drive this is by doing a 
+{\ltt{}mount} command and looking for the entry for ``/".
+
+ls -l /dev/root
+
+
+lrwxrwxrwx 1 root root 4 Feb  5 19:10 /dev/root -> sda2
+
+df
+
+/dev/sdb1                480589544  47465688 408688196  11% /u3
+/dev/sdc1                480589544 293220700 162933184  65% /u4
+
+4) On the root ({\ltt{}/}) file system, how much disk space is available (df)?
+
+df
+
+lesystem                           1K-blocks      Used Available Use% Mounted
+on
+/dev/root                            865292600   6229316 815108972   1% /
+devtmpfs                                995744         0    995744   0% /dev
+tmpfs                                   997968       888    997080   1% /run
+tmpfs                                   997968         0    997968   0%
+/dev/shm
+cgroup_root                             997968         0    997968   0%
+/sys/fs/cgroup
+/dev/sdb1                            480589544  47465696 408688188  11% /u3
+/dev/sdc1                            480589544 293220700 162933184  65% /u4
+cgmfs                                      100         0       100   0%
+/run/cgmanager/fs
+jaguar:/sdb/slack14.2-64/slackware64 153836544  18246400 127775744  13%
+/mnt/cdrom
+
+5) On the root ({\ltt{}/}) file system, what is the file system type
+and is the file system read only or read/write (mount)?
+
+The filesystem type is ext4 and is (rw) read/write
+
+mount
+
+/dev/sda2 on / type ext4 (rw)
+proc on /proc type proc (rw)
+sysfs on /sys type sysfs (rw)
+tmpfs on /dev/shm type tmpfs (rw)
+/dev/sdb1 on /u3 type ext4 (rw)
+/dev/sdc1 on /u4 type ext4 (rw)
+nfsd on /proc/fs/nfs type nfsd (rw)
+nfsd on /proc/fs/nfsd type nfsd (rw)
+jaguar:/sdb/slack14.2-64/slackware64 on /mnt/cdrom type nfs
+(rw,addr=134.139.248.18)
+
+6) In your home directory, how much space have you used (not much yet) (du)?
+
+du
+
+8	./.ssh
+72	.
+
+
+7) Your home directory is on one of the hard drive partitions.
+Report the line in the {\ltt{}fstab} that causes that partition
+to be mounted.
+
+cat /etc/fstab
+
+/dev/sda1        swap             swap        defaults         0   0
+
+On the system you administer, using the system administrator account;
+examine the superblock of the linux partition on your hard drive
+({\ltt{}/dev/sda2}) using the {\ltt{}dumpe2fs} command.
+
+8) Report: The file system state, the block size and the number of groups
+in that file system.
+
+dumpe2fs /dev/
+
+Filesystem state:         not clean
+Block size:               4096
+Group 476:
+
+9) {\bf fdisk -l}:
+For the disk you administer describe the partitions that are on the disk?
+For each partition {\it report}, what cylinder it starts at,
+what cylinder it ends at,
+and what kind of a partition it is (Linux, DOS, swap).
+Be very careful with this one, 
+DO NOT MODIFY or WRITE anything with fdisk; 
+you could erase your hard drive.
+
+fdisk -l
+
+Device     Boot    Start       End   Sectors  Size Id Type
+/dev/sda1           2048  31258180  31256133 14.9G 82 Linux swap
+/dev/sda2       31258181 156301487 125043307 59.6G 83 Linux
+
+Submission: You will submit hw04.txt with ``\tilde grader/submit 04". 
+It must contain the contents of cpeek and clook as well as answers to 
+the other questions.
+
+\bye

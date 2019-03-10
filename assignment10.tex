@@ -1,0 +1,163 @@
+\input macros
+\rightskip=0pt plus 1fill
+\input cstuff
+\headline{{\bf CECS 476\hfill Assignment 10 \hfill Spring 2019}}
+\footline{Nathan Pickrell \hfill 26 February 2019 (Week 6, Lecture 1)\hfill 
+Due: 28 February 2019 (Week 6, Lab 2)}
+\parindent 0pt
+
+This project is about general networking.
+You will be asked about existing configurations. 
+In general the answers to the questions can be found on the machine for
+which you are an administrator.
+No root priviledges should be necessary to answer any of the questions.
+
+Questions about network drivers.
+(visit {\ltt{}drivers/net} in the kernel source code)
+
+1) Support for several types of 3-Com (3cXXX) Ethernet cards are available
+for the Linux kernel, list 4 such cards.
+
+cd /usr/src/linux/drivers/net/ethernet/3com
+ls
+
+3c509.c 
+3c59x.c
+3c515.c  
+3c589_cs.c
+
+2) List 3 Intel Ethernet drivers. 
+
+cd /usr/src/linux/drivers/net/ethernet/intel
+ls
+
+e100.c
+e100.mod.c
+e100.0
+
+% 3) On a Parallel line cable running PLIP, what is pin 25 used for?
+3) On a Parallel line cable running PLIP, what are pins 18,19 and 20 used for?
+
+Pins 18, 19, 20 are gounds
+
+Questions about configuration of TCP/IP.
+(examine the front of your machine, also run the ifconfig and netstat commands)
+
+4) Use a command to find out the fully qualified hostname of your machine?
+What is the fully qualified hostname and what command did you use to find this out?
+
+hostname --fqdn
+lab70.net.cecs.csulb.edu
+
+5) What is the hardware (ethernet) address of your machine?
+
+ifconfig eth0
+
+ether 00:22:4d:4c:79:75
+
+6) What does it use for its broadcast address?
+
+ifconfig eth0
+
+broadcast 134.139.248.95
+
+7) The routing table for your machine contains one gateway entry.
+What is that entry?
+
+route
+
+default         jaguar.net.cecs 0.0.0.0         UG    1      0        0 eth0
+
+8) What netmask does the loopback interface use?
+
+route
+
+loopback        *               255.0.0.0       U     0      0        0 lo
+
+Question about arp.  Ping two other of the lab machines. 
+
+9) What entries are in the arp table?
+Give the full entries including the hardware addresses.
+
+--on jaguar--
+
+arp -n
+Address                  HWtype  HWaddress           Flags Mask	Iface
+134.139.248.81           ether   e8:40:f2:05:e6:35   C		eth2
+134.139.248.78           ether   00:22:4d:4c:78:9f   C		eth2
+134.139.248.48           ether   00:22:4d:4c:79:ec   C		eth1
+134.139.248.70           ether   00:22:4d:4c:79:75   C		eth2
+134.139.248.45           ether   00:22:4d:4c:79:8e   C		eth1
+134.139.248.37           ether   00:22:4d:4c:79:6d   C		eth1
+134.139.248.75           ether   00:22:4d:4c:79:25   C		eth2
+...
+
+
+Questions about the resolver. 
+Examine {\ltt{}/etc/resolv.conf} and {\ltt{}/etc/nsswitch.conf};
+ read the manual entry for {\ltt{}resolv.conf}.
+
+10) What methods (NIS, DNS/bind, hosts file) does your machine use
+to locate a hostname and in what order?
+
+--on cheetah--
+
+vim /etc/nsswitch.conf
+
+hosts: files dns
+
+11) What other machine does your machine use for DNS (resolver)?
+
+vim /etc/resolv.conf
+
+nameserver 134.139.248.17
+
+12) Your machine allows certain other machines to be accessed without
+typing the entire (fully qualified) host name. Which hostnames can
+be accessed using this shorthand.
+
+*net.cecs.csulb.edu
+*cecs.csulb.edu
+*coe.csulb.edu
+*csulb.edu
+
+Questions about the route table on {\ltt{}panther}.
+
+13) What two gateways (routers) does {\ltt{}panther} know about?
+
+--in panther--
+route
+
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         cheetah.cecs.cs 0.0.0.0         UG    1      0        0 eth0
+134.139.248.32  jaguar.net.cecs 255.255.255.224 UG    0      0        0 eth0
+
+
+14) What route entry on {\ltt{}panther} allows {\ltt{}panther}
+to talk to the machine you administer?
+Hint: what network address and subnet mask is your machine part of
+
+route
+
+network address: 134.139.248.64
+subtnet mask: 255.255.255.224
+
+
+Questions about netmasks.
+
+15) A machine has internet number {\ltt{} 134.139.43.56}
+and netmask {\ltt{} 255.255.255.0};
+give its subnet number (network name) and subnet broadcast address.
+
+subnet number: 134.139.43.0
+broadcast address: 134.139.43.255
+
+
+16) A machine has internet number {\ltt{} 134.139.201.134}
+and netmask {\ltt{} 255.255.255.224};
+give its subnet number (network name) and subnet broadcast address.
+
+subnet number: 134.139.201.128
+broadcast address: 134.139.201.159
+
+\bye

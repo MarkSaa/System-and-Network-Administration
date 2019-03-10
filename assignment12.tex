@@ -1,0 +1,128 @@
+\input macros
+\rightskip=0pt plus 1fill
+\input cstuff
+\headline{{\bf CECS 476\hfill Assignment 12 \hfill Spring 2019}}
+\footline{Nathan Pickrell \hfill 5 March 2019 (Week 7 Lecture 1)\hfill 
+Due: 7 March 2019 (Week 7 Lab 2)}
+\parindent 0pt
+
+Since NIS is running, this project mostly involves only
+information gathering and configuration examination:
+
+1) What is the NIS domain name of your machine.
+Report the command you ran to find this out and the domain name.
+
+--in root--
+
+cat /etc/defaultdomain
+
+cecsnet
+
+
+2) What NIS server is your machine using.
+Report the command you ran to find this out and the server name.
+
+ypwhich
+
+cheetah.cecs.csulb.edu
+
+
+3) How many password lines does NIS deliver on your machine.
+Report: the exact command you used and the number of lines.
+
+ypcat passwd | wc -l
+
+51
+
+4) Examine the NIS password information arriving at your machine.
+For your 476 account {\it report} the exact line of 
+information that arrives.
+You are NOT allowed to use the same yp command you used in the previous
+question, use another command to match the line in the password file.
+Report the exact command you used to get that information.
+
+ypmatch csa476t1 -k passwd
+
+csa476t1
+csa476t1:$6$C/x3S/t0$7HPe7IgYLBNyMXf40F2x1eBQrCFWKYudqFezIMHDpTORsG5ZaKRoqLR3kcd95fQwlqS5IegFsNxHCz5xOqx0N0:20062:1001:student:/net/cheetah/u3/c/csa476/t1:/bin/bash
+
+
+5) Examine the {\ltt{}/var/yp} directory tree on your machine.
+Report: what in this subtree is dependent upon your domain name.
+
+vim /var/yp/binding
+
+cecsnet.1
+cecsnet.2
+
+6) Examine your {\ltt{}yp.conf} file, what is there.
+
+cat /etc/yp.conf
+
+--commented lines--
+ypserver 134.139.248.17
+
+
+7) Examine the start-up code for the yp client program.
+What is the exact (full) pathname of the program that is run
+(that means the name starting with the {\ltt{}/}).
+Under what condition is this program started?
+
+vim /etec/rc.d/rc.yp
+
+if [ $YP_CLIENT_ENABLE -new 0]; then
+if [ -d /var/yp ]; then
+echo "Starting NIS services: /usr/sbin/ypbind"
+/usr/sbin/ypbind
+fi 
+fi
+
+
+8) Examine your {\ltt{}nsswitch.conf}.
+Is it set up to use yp for passwords?
+How do you know?
+
+vim /etc/nsswitch.conf
+
+passwd:	files nis
+
+Yes, it is set up for NIS
+
+9)  On cheetah, examine the {\ltt{}/etc/netgroup} file.
+Report: How many machines are in the {\ltt{}cslabd} netgroup.
+
+--in cheetah--
+
+vim /etc/netgroup
+
+cslabd (panther, -,) (puma,-,) (lynx,-)
+
+
+10) On the machine you administer, the groups that {\ltt{}cheetah} is
+delivering using NIS are being used. 
+Do the following.
+Turn off the use of NIS groups on your machine.
+(A HUP is not necessary in this case.)
+An {\ltt{}ls -l ~sue} should give the number 1202
+instead of a name for the ``group" of sue's files.
+When this works, turn back on the use of NIS groups.
+Again use the {\ltt{}ls -l ~sue}, this time to make sure
+that a name is given for the group of sue's files.
+Report: What did you do to turn on/off the use of NIS groups?
+
+
+vim /etc/nsswitch.conf
+
+--comment out nis in group:--
+
+ls -l ~sue
+total 4
+drwxr-xr-x 2 sue 1202 4096 Feb  4 16:44 skel/
+
+--comment nis back into group:--
+
+ls -l ~sue
+total 4
+drwxr-xr-x 2 sue cecsg 4096 Feb  4 16:44 skel/
+
+\bye

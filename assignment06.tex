@@ -1,0 +1,196 @@
+\input macros
+\rightskip=0pt plus 1fill
+\input cstuff
+\headline{{\bf CECS 476\hfill Assignment 6 \hfill Spring 2019}}
+\footline{Nathan Pickrell \hfill 12 February 2019 (Week 4 Lecture 1)\hfill 
+Due: 14 February 2019 (Week 4 Lab 2)}
+\parindent 0pt
+
+This part of the assignment is designed to familiarize you with the
+commands involving Unix processes.
+
+Submission: You will submit hw06.txt with ``\tilde grader/submit 06".
+Your instructor will also test your swap configurations while grading.
+
+For Cheetah: 1) how long has it been since it has
+been rebooted, 
+
+uptime
+
+17:07:47 up  1:58
+
+2) how many users are logged in, 
+
+24 users
+
+3) how busy is the machine
+(short, medium and long term load).
+
+load average: 0.00, 0.00, 0.00
+
+For Cheetah: 4) What percentage of the cpu is the operating system
+spending in each of user mode, system mode and idle?
+
+top
+
+us,  0.7% 
+sy,  0.5%
+id,  98.7%
+
+
+5) How much memory is in use and
+how much is idle?
+
+Used: 198448 used
+Idle: 1517648 free
+
+6) What 3 processes have the largest resident set size?
+
+PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND    
+ 6682 csa476d2  20   0   14368   2740   2136 S   1.0  0.1   0:01.80 top        
+ 6943 csa476t1  20   0   14336   2760   2312 R   0.7  0.1   0:00.66 top        
+ 7062 csa476u1  20   0   14340   2768   2136 S   0.7  0.1   0:00.28 top
+
+For the machine you administer answer the following:
+7) How many processes called {\ltt{}agetty} are running?
+
+ps auxww | grep agetty
+
+root      1302  0.0  0.0   6948  1480 tty1     Ss+  15:09   0:00 /sbin/agetty
+38400 tty1 linux
+root      1303  0.0  0.0   6948  1636 tty2     Ss+  15:09   0:00 /sbin/agetty
+38400 tty2 linux
+root      1304  0.0  0.0   6948  1556 tty3     Ss+  15:09   0:00 /sbin/agetty
+38400 tty3 linux
+root      1305  0.0  0.0   6948  1644 tty4     Ss+  15:09   0:00 /sbin/agetty
+38400 tty4 linux
+root      1306  0.0  0.0   6948  1728 tty5     Ss+  15:09   0:00 /sbin/agetty
+38400 tty5 linux
+root      1307  0.0  0.0   6948  1708 tty6     Ss+  15:09   0:00 /sbin/agetty
+38400 tty6 linux
+csa476t1  7358  0.0  0.1  11672  2100 pts/6    S+   17:58   0:00 grep agetty
+
+8) There are several commands running that include the letters {\ltt{}rpc},
+list all those commands.
+
+ps auxww | grep rpc
+
+root        28  0.0  0.0      0     0 ?        S<   15:08   0:00 [rpciod]
+bin        966  0.0  0.1  13188  2292 ?        Ss   15:09   0:00 /sbin/rpcbind
+-l -w
+rpc        977  0.0  0.1  17636  2572 ?        Ss   15:09   0:00
+/sbin/rpc.statd
+root      1018  0.0  0.0  10916   116 ?        S    15:09   0:00
+/usr/sbin/rpc.yppasswdd
+root      1023  0.0  0.0   8696   104 ?        S    15:09   0:00
+/usr/sbin/rpc.ypxfrd
+root      1060  0.0  0.0  26480   396 ?        Ss   15:09   0:00
+/usr/sbin/rpc.rquotad
+root      1076  0.0  0.1  21032  3904 ?        Ss   15:09   0:00
+/usr/sbin/rpc.mountd
+csa476t1  7512  0.0  0.1  11672  2188 pts/6    S+   18:02   0:00 grep rpc
+
+9) What is the resident set size and total (virtual memory or VM) size of the
+{\ltt{}inetd} process.
+
+ps auxww | grep inetd
+
+Resident Set Size: 1712
+VM size: 6488
+
+This part of the assignment is designed to familiarize you with the
+commands involving virtual memory and swapping.
+
+10) As it is set up,
+does your machine use a swap partition or a swap file? 
+Report which it is.
+Report the full name of the swap partition or file.
+
+free
+vim /etc/fstab
+
+/de/sda1	swap	swap	defaults	0	0
+
+11) Report the following in kilobytes with the
+command used to find it:
+
+free -m
+
+a) the amount of memory available.
+1454 MB
+\break
+b) the amount of memory in use.
+ 213 MB
+\break
+c) the amount of memory used for buffers.
+281 MB
+\break
+d) the amount of swap space available.
+ 95385 MB
+\break
+e) the amount of swap space in use.
+0 MB
+
+
+On the lab machine you are assigned to administer:
+
+Set up a 4 MB (or 16 MB depending on blocksize) swap file, 
+call it {\ltt{}/swapfile}. Turn on swapping for that file.
+
+12) Report the exact commands you used to do this.
+
+dd if=/dev/zero of=/swapfile bs=1024 count=4096   
+
+mkswap /swapfile
+
+swapon /swapfile
+
+
+13) Report the amount of swap space available and the 
+amount in use before and after turning swapping on 
+(it could be zero use before and after).
+
+Free: 15265 MB
+Used: 0
+
+Turn off swapping and remove your file.
+
+Note for subsequent questions:
+If you did the {\ltt{}fdisk} as directed in the previous 
+homework, the swap partion you created should be 
+{\ltt{}/dev/sdb1}; this is your ``second" swap partition.
+The swap partition I created is {\ltt{}/dev/sda1} 
+and is already in use.
+
+First, set up the swap structure in your second swap partition.
+Second, modify your {\ltt{}fstab} so that swapping in 
+that partition is turned on automatically at boot.
+(Use the {\ltt{}swapon -a} command to make sure you've got
+everything setup correctly, else the next step will lock up!!!)
+Now that you've tested to make sure things work, reboot
+(This is to make sure the ``automatically at boot" is working.)
+This new swap partition is permanent, do not remove it.
+
+swapoff /swapfile
+rm /swapfile
+mkswap /dev/sdb1
+vim /etc/fstab
+
+/dev/sdb1 swap...
+
+swapon -a
+
+--restart--
+
+
+14) Report the amount of swap space available and the amount in use.
+(This should be different from your previous report of 
+swap space, by approximately the size of your new 
+swap partition!)
+
+free
+
+Free: 23442104
+used: 0
+
+\bye
